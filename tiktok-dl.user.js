@@ -44,7 +44,7 @@ async function downloadVideo(){
 	});
   const watermarklessVideo = await watermarklessVideoResponse.blob();
   console.log(watermarklessVideo);
-  const fileName = pageData.props.pageProps.videoData.itemInfos.id + 'mp4';
+  const fileName = pageData.props.pageProps.videoData.itemInfos.id + '.mp4';
   saveFile(watermarklessVideo, fileName);
 }
 
