@@ -30,8 +30,15 @@ async function downloadVideo(){
   const watermarkedVideoResponse = await fetch(watermarkedURL);
   const watermarkedVideoText = await watermarkedVideoResponse.text();
   const idpos = watermarkedVideoText.indexOf('vid:');
-  const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
-  const watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
+  console.log(idpos);
+  var watermarklessURL;
+  if(idpos == -1){
+    watermarklessURL = watermarkedURL;
+  }else{
+    const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
+  	watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
+  }
+  
   
   const watermarklessVideoResponse = await fetch(watermarklessURL, {
 		headers: {
@@ -54,7 +61,6 @@ pageObserver.observe(
 
 
 async function createDownloadButton(){
-  console.log("triggering");
   const shareBoxes = document.getElementsByClassName('share-group');
   for(shareBox of shareBoxes){
     if(shareBox.getElementsByClassName('downloadButton').length > 0) continue;
