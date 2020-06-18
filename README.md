@@ -7,3 +7,6 @@ Tiktok downloader.
 
 # Usage
 A download button will appear next to the other share buttons when viewing a post. If it doesn't appear, refresh the page or open it in a new tab.
+
+# Credits
+Thanks to [tiktok-scraper](https://github.com/drawrowfly/tiktok-scraper) for watermarkless video extraction trick.
