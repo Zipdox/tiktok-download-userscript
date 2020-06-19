@@ -48,7 +48,7 @@ async function downloadVideo(){
   const watermarklessVideo = await watermarklessVideoResponse.blob();
   
   const splitWindowURL = window.location.toString().split('/');
-  const vidID = splitWindowURL[splitWindowURL.length - 1].slice(0, 19);
+  const vidID = splitWindowURL[splitWindowURL.length - 1].slice(0, 18);
   const fileName = vidID + '.mp4';
   saveFile(watermarklessVideo, fileName);
 }
