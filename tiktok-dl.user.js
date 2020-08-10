@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name     TikTok Downloader
-// @version  1.1
-// @grant    none
-// @match    https://www.tiktok.com/@*
-// @run-at   document-end
-// @author   Zipdox
+// @name        TikTok Downloader
+// @version     1.2
+// @grant       none
+// @match       https://www.tiktok.com/@*
+// @run-at      document-end
+// @author      Zipdox
 // @homepageURL https://github.com/Zipdox/tiktok-download-userscript
-// @require      https://raw.githubusercontent.com/narcolepticinsomniac/arrive/master/minified/arrive.min.js
+// @require     https://raw.githubusercontent.com/uzairfarooq/arrive/master/minified/arrive.min.js
 // ==/UserScript==
 
 const icons = {
@@ -50,10 +50,10 @@ async function downloadVideo(){
   const watermarkedVideoText = await watermarkedVideoResponse.text();
   this.innerHTML = icons.processing;
   const idpos = watermarkedVideoText.indexOf('vid:');
-  console.log(idpos);
   var watermarklessURL;
   if(idpos == -1){
     watermarklessURL = watermarkedURL;
+    alert("Couldn't get the watermarkless version for this video");
   }else{
     const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
   	watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
