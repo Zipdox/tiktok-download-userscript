@@ -12,7 +12,7 @@ Install a userscript manager:
 Then click [here](https://github.com/Zipdox/tiktok-download-userscript/raw/master/tiktok-dl.user.js) to install the userscript.
 
 # Usage
-A download button will appear next to the other share buttons when viewing a post.
+A download button will appear next to the other share buttons when viewing a post:
 
 ![share buttons](https://github.com/Zipdox/tiktok-download-userscript/raw/master/share_buttons.png)
 
