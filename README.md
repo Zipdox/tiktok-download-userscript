@@ -8,8 +8,8 @@ Tiktok has changed something in their backend and we're currenly unable to get w
 # Installation
 Install a userscript manager:
 
-  * [Greasemonkey (Firefox)](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
-  * [Tampermonkey (Chrome/Chromium)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+  * [Greasemonkey (Firefox)](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/){:target="_blank"}
+  * [Tampermonkey (Chrome/Chromium)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo){:target="_blank"}
 
 Install these as you wish:
 
@@ -27,7 +27,7 @@ A Get Stream button will appear next to the TikTok logo:
 ![share buttons](https://github.com/Zipdox/tiktok-download-userscript/raw/master/copy_stream.png)
 
 # Credits
-Thanks to [tiktok-scraper](https://github.com/drawrowfly/tiktok-scraper) for watermarkless video extraction trick.
+Thanks to [tiktok-scraper](https://github.com/drawrowfly/tiktok-scraper){:target="_blank"} for watermarkless video extraction trick.
 
 # License
-This code is licensed under the [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+This code is licensed under the [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html){:target="_blank"}.
