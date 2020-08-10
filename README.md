@@ -14,6 +14,8 @@ Then click [here](https://github.com/Zipdox/tiktok-download-userscript/raw/maste
 # Usage
 A download button will appear next to the other share buttons when viewing a post.
 
+![share buttons](https://github.com/Zipdox/tiktok-download-userscript/raw/master/share_buttons.png)
+
 # Credits
 Thanks to [tiktok-scraper](https://github.com/drawrowfly/tiktok-scraper) for watermarkless video extraction trick.
 
