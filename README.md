@@ -14,7 +14,7 @@ Install a userscript manager:
 Install these as you wish:
 
   * [Video Download](https://github.com/Zipdox/tiktok-download-userscript/raw/master/tiktok-dl.user.js)
-  * [Stream Link Extractor](https://github.com/Zipdox/tiktok-download-userscript/raw/master/tiktok-dl.user.js)
+  * [Stream Link Extractor](https://github.com/Zipdox/tiktok-download-userscript/raw/master/tiktok-stream.user.js)
 
 # Video Downloader Usage
 A download button will appear next to the other share buttons when viewing a post:
