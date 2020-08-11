@@ -51,9 +51,50 @@ async function downloadVideo(){
   this.innerHTML = icons.processing;
   const idpos = watermarkedVideoText.indexOf('vid:');
   var watermarklessURL;
+  this.innerHTML = icons.processing;
   if(idpos == -1){
-    watermarklessURL = watermarkedURL;
-    alert("Couldn't get the watermarkless version for this video");
+    if(confirm("Couldn't get watermarkless video with normal method, want to try a workaround?")){
+      const getTokenPage = await fetch('https://ssstiktok.io/');
+      const tokenPageText = await getTokenPage.text();
+      const tokenDomParser = new DOMParser();
+      const tokenDocument = tokenDomParser.parseFromString(tokenPageText, 'text/html');
+      const token = tokenDocument.getElementById('token').value;
+      const locale = tokenDocument.getElementById('locale').value;
+
+      const getInfo = await fetch("https://ssstiktok.io/api/1/fetch", {
+        "credentials": "include",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0",
+          "Accept": "*/*",
+          "Accept-Language": "en-US,en;q=0.5",
+          "HX-Request": "true",
+          "HX-Target": "target",
+          "HX-Current-URL": "https://ssstiktok.io/",
+          "HX-Active-Element": "submit",
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+        "body": `id=${encodeURIComponent(window.location.href)}&token=${token}&locale=${locale}`,
+        "method": "POST",
+        "mode": "cors"
+      });
+      const infoPageText = await getInfo.text();
+      console.log(infoPageText);
+      this.innerHTML = icons.loading;
+      const infoDomParser = new DOMParser();
+      const infoPage = infoDomParser.parseFromString(`<html><body>${infoPageText}</body></html>`, 'text/html');
+      console.log(infoPage);
+      const downloadLinks = infoPage.firstChild.getElementsByTagName('a');
+      console.log(downloadLinks);
+      for(downloadLink of downloadLinks){
+        if(downloadLink.innerText == 'Without watermark [2]'){
+          watermarklessURL = downloadLink.href;
+        }
+      }
+    }else{
+      watermarklessURL = watermarkedURL;
+    }
+    this.innerHTML = icons.processing;
+
   }else{
     const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
   	watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
