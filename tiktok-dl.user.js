@@ -3,7 +3,7 @@
 // @version     1.2
 // @grant       none
 // @match       https://www.tiktok.com/@*
-// @run-at      document-end
+// @run-at      document-start
 // @author      Zipdox
 // @homepageURL https://github.com/Zipdox/tiktok-download-userscript
 // @require     https://raw.githubusercontent.com/uzairfarooq/arrive/master/minified/arrive.min.js
@@ -16,15 +16,20 @@ const icons = {
 };
 
 document.arrive(".share-group", function(){
+  console.log(this);
   if(this.getElementsByClassName('downloadButton').length > 0) return;
-  let shareButtons = this.getElementsByTagName('a');
   let downloadButton = document.createElement('a');
-  this.insertBefore(downloadButton, shareButtons[4]);
-  downloadButton.innerHTML = icons.download;
-  downloadButton.className = shareButtons[1].className + ' downloadButton';
-  downloadButton.onclick = downloadVideo;
+	downloadButton.style.display = 'inline-block';
+  downloadButton.style.width = '24px';
+  downloadButton.style.height = '24px';
+  downloadButton.style.marginRight = '8px';
   downloadButton.style.cursor = 'pointer';
+  downloadButton.innerHTML = icons.download;
+  this.appendChild(downloadButton);
+  console.log(downloadButton);
+  downloadButton.onclick = downloadVideo;
 });
+
 
 function saveFile(blob, filename) {
   if (window.navigator.msSaveOrOpenBlob) {
@@ -43,39 +48,51 @@ function saveFile(blob, filename) {
   }
 }
 
+
 async function downloadVideo(){
   this.innerHTML = icons.loading;
   const watermarkedURL = document.getElementsByClassName('video-card-big')[0].getElementsByClassName('video-player')[0].src;
-  const watermarkedVideoResponse = await fetch(watermarkedURL);
-  const watermarkedVideoText = await watermarkedVideoResponse.text();
+  console.log('Watermarked Video URL:', watermarkedURL);
+  const watermarkedVideoFetch = await fetch(watermarkedURL);
+  const watermarkedVideoText = await watermarkedVideoFetch.text();
+  
   this.innerHTML = icons.processing;
   const idpos = watermarkedVideoText.indexOf('vid:');
-  var watermarklessURL;
-  this.innerHTML = icons.processing;
+  console.log(idpos);
   if(idpos == -1){
     if(confirm("Couldn't get watermarkless video with normal method, want to try a workaround?")){
       const getTokenPage = await fetch('https://ssstiktok.io/');
       const tokenPageText = await getTokenPage.text();
       const tokenDomParser = new DOMParser();
       const tokenDocument = tokenDomParser.parseFromString(tokenPageText, 'text/html');
-      const token = tokenDocument.getElementById('token').value;
-      const locale = tokenDocument.getElementById('locale').value;
+      const paramsForm = tokenDocument.getElementsByClassName('pure-form pure-g hide-after-request')[0];
+      const includeVals = paramsForm.getAttribute('include-vals');
+      const postURL = 'https://ssstiktok.io' + paramsForm.getAttribute('data-hx-post');
+      console.log(postURL);
+      const tt = includeVals.match(new RegExp('tt:\'' + "(.*)" + '\''))[1];
+      const ts = includeVals.match(new RegExp('ts:' + "(.*)"))[1];
+      const postBody = `id=${encodeURIComponent(window.location.href)}&locale=en&tt=${tt}&ts=${ts}`;
+      console.log(postBody);
 
-      const getInfo = await fetch("https://ssstiktok.io/api/1/fetch", {
-        "credentials": "include",
-        "headers": {
-          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0",
-          "Accept": "*/*",
-          "Accept-Language": "en-US,en;q=0.5",
-          "HX-Request": "true",
-          "HX-Target": "target",
-          "HX-Current-URL": "https://ssstiktok.io/",
-          "HX-Active-Element": "submit",
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        },
-        "body": `id=${encodeURIComponent(window.location.href)}&token=${token}&locale=${locale}`,
-        "method": "POST",
-        "mode": "cors"
+      const getInfo = await fetch(postURL, {
+          "credentials": "include",
+          "headers": {
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0",
+              "Accept": "*/*",
+            	"Connection": "keep-alive",
+              "Accept-Language": "en-US,en;q=0.5",
+              "HX-Request": "true",
+              "HX-Target": "target",
+              "HX-Current-URL": "https://ssstiktok.io/",
+              "HX-Active-Element": "main_page_text",
+              "HX-Active-Element-Name": "id",
+              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            	"Origin": "https://ssstiktok.io",
+            	"Host": "ssstiktok.io",
+          },
+          "body": postBody,
+          "method": "POST",
+          "mode": "cors"
       });
       const infoPageText = await getInfo.text();
       console.log(infoPageText);
