@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        TikTok Downloader
-// @version     1.2
+// @version     1.3
 // @grant       none
 // @match       https://www.tiktok.com/@*
 // @run-at      document-start
@@ -54,78 +54,51 @@ async function downloadVideo(){
   const watermarkedURL = document.getElementsByClassName('video-card-big')[0].getElementsByClassName('video-player')[0].src;
   console.log('Watermarked Video URL:', watermarkedURL);
   const watermarkedVideoFetch = await fetch(watermarkedURL);
-  const watermarkedVideoText = await watermarkedVideoFetch.text();
+  const watermarkedVideoBlob = await watermarkedVideoFetch.blob();
+  const watermarkedVideoText = await watermarkedVideoBlob.text();
   
   this.innerHTML = icons.processing;
   const idpos = watermarkedVideoText.indexOf('vid:');
-  console.log(idpos);
+  console.log('Video ID postion:', idpos);
+  var watermarklessURL;
   if(idpos == -1){
-    if(confirm("Couldn't get watermarkless video with normal method, want to try a workaround?")){
-      const getTokenPage = await fetch('https://ssstiktok.io/');
-      const tokenPageText = await getTokenPage.text();
-      const tokenDomParser = new DOMParser();
-      const tokenDocument = tokenDomParser.parseFromString(tokenPageText, 'text/html');
-      const paramsForm = tokenDocument.getElementsByClassName('pure-form pure-g hide-after-request')[0];
-      const includeVals = paramsForm.getAttribute('include-vals');
-      const postURL = 'https://ssstiktok.io' + paramsForm.getAttribute('data-hx-post');
-      console.log(postURL);
-      const tt = includeVals.match(new RegExp('tt:\'' + "(.*)" + '\''))[1];
-      const ts = includeVals.match(new RegExp('ts:' + "(.*)"))[1];
-      const postBody = `id=${encodeURIComponent(window.location.href)}&locale=en&tt=${tt}&ts=${ts}`;
-      console.log(postBody);
-
-      const getInfo = await fetch(postURL, {
-          "credentials": "include",
-          "headers": {
-              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0",
-              "Accept": "*/*",
-            	"Connection": "keep-alive",
-              "Accept-Language": "en-US,en;q=0.5",
-              "HX-Request": "true",
-              "HX-Target": "target",
-              "HX-Current-URL": "https://ssstiktok.io/",
-              "HX-Active-Element": "main_page_text",
-              "HX-Active-Element-Name": "id",
-              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            	"Origin": "https://ssstiktok.io",
-            	"Host": "ssstiktok.io",
-          },
-          "body": postBody,
-          "method": "POST",
-          "mode": "cors"
-      });
-      const infoPageText = await getInfo.text();
-      console.log(infoPageText);
-      this.innerHTML = icons.loading;
-      const infoDomParser = new DOMParser();
-      const infoPage = infoDomParser.parseFromString(`<html><body>${infoPageText}</body></html>`, 'text/html');
-      console.log(infoPage);
-      const downloadLinks = infoPage.firstChild.getElementsByTagName('a');
-      console.log(downloadLinks);
-      for(downloadLink of downloadLinks){
-        if(downloadLink.innerText == 'Without watermark [2]'){
-          watermarklessURL = downloadLink.href;
-        }
-      }
-    }else{
-      watermarklessURL = watermarkedURL;
-    }
     this.innerHTML = icons.processing;
-
   }else{
     const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
+    console.log('Video ID:', videoid);
   	watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
+    console.log('Watermarkless Video URL:', watermarklessURL);
   }
-  
-  
-  const watermarklessVideoResponse = await fetch(watermarklessURL, {
-		headers: {
-			'User-Agent': 'okhttp'
-		}
-	});
-  const watermarklessVideo = await watermarklessVideoResponse.blob();
-  
+  var watermarklessVideo;
+  if(watermarklessURL != undefined){
+    const watermarklessVideoResponse = await fetch(watermarklessURL, {
+      headers: {
+        'User-Agent': 'okhttp',
+        'Referrer': document.location.href
+      }
+    });
+    watermarklessVideo = await watermarklessVideoResponse.blob();
+  }else{
+  	if(confirm("Can't extract this video without watermark. Would you like to copy the URL and go to ssstiktok?")){
+      copyToClipboard(window.location.href);
+      window.open('https://ssstik.io/');
+      return;
+    }else{
+      watermarklessVideo = watermarkedVideoBlob;
+    }
+    
+  }
+  console.log(watermarklessVideo);
   const fileName = window.location.href.match(/video\/(\d{19})/)[1] + '.mp4';
   saveFile(watermarklessVideo, fileName);
   this.innerHTML = icons.download;
+}
+
+function copyToClipboard(link){
+  const copyText = document.createElement('textarea');
+  copyText.value = link;
+  document.body.appendChild(copyText);
+  copyText.select();
+  document.execCommand("copy");
+  document.body.removeChild(copyText);
 }
