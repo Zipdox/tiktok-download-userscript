@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        TikTok Downloader
-// @version     1.2
+// @version     1.4
 // @grant       none
 // @match       https://www.tiktok.com/@*
 // @run-at      document-start
