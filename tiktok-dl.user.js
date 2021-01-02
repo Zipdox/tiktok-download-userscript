@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        TikTok Downloader
-// @version     1.3
+// @version     1.2
 // @grant       none
 // @match       https://www.tiktok.com/@*
 // @run-at      document-start
@@ -62,7 +62,12 @@ async function downloadVideo(){
   console.log('Video ID postion:', idpos);
   var watermarklessURL;
   if(idpos == -1){
-    this.innerHTML = icons.processing;
+    const nextDataText = document.getElementById('__NEXT_DATA__').innerHTML;
+    const nextData = JSON.parse(nextDataText);
+    const videoid = nextData.props.pageProps.itemInfo.itemStruct.video.id;
+    console.log('Video ID:', videoid);
+  	watermarklessURL = `https://api2-16-h2.musical.ly/aweme/v1/play/?video_id=${videoid}&vr_type=0&is_play_url=1&source=PackSourceEnum_PUBLISH&media_type=4`;
+    console.log('Watermarkless Video URL:', watermarklessURL);
   }else{
     const videoid = watermarkedVideoText.slice(idpos + 4, idpos + 36).toString();
     console.log('Video ID:', videoid);
